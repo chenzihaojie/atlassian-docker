@@ -1,0 +1,37 @@
+version: '2'
+services:
+  jira:
+    image: 'chenzihaojie/atlassian-jira-software:7.13.0'
+    restart: always
+    hostname: jira
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "20011:8085"
+      - "20012:8080"
+      - "20013:8443"
+      - "20014:8090"
+    volumes:
+      - '$HOME/jira/var_atlassian_jira:/var/atlassian/jira'
+    depends_on:
+      - jira-mysql
+    links:
+      - jira-mysql
+
+  jira-mysql:
+    image: 'mysql:5.7'
+    restart: always
+    hostname: jira-mysql
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=jira
+      - MYSQL_USER=jira
+      - MYSQL_PASSWORD=jira
+      - character-set-server=utf8
+      - collation-server=utf8_bin
+    ports:
+      - "20010:3306"
+    volumes:
+      - './my.ini:/etc/mysql/my.cnf'
+      - '$HOME/jira/mysql:/var/lib/mysql'

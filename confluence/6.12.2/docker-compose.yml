@@ -1,0 +1,37 @@
+version: '2'
+services:
+  confluence:
+    image: "chenzihaojie/atlassian-confluence:6.12.2"
+    restart: always
+    privileged: true
+    hostname: confluence
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "20040:8090"
+      - "20041:8000"
+    volumes:
+      - '$HOME/confluence/var_atlassian_confluence:/var/atlassian/confluence'
+    depends_on:
+      - confluence-mysql
+    links:
+      - confluence-mysql
+
+  confluence-mysql:
+    image: "mysql:5.7"
+    restart: always
+    privileged: true
+    hostname: confluence-mysql
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=confluence
+      - MYSQL_USER=confluence
+      - MYSQL_PASSWORD=confluence
+      - character-set-server=utf8
+      - collation-server=utf8_bin
+    ports:
+      - "20042:3306"
+    volumes:
+      - './my.ini:/etc/mysql/my.cnf'
+      - '$HOME/confluence/mysql:/var/lib/mysql'
